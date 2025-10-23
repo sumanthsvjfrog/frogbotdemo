@@ -1,2 +1,3 @@
 PyYAML>3.11
 nltk
+snowflake-connector-python<=3.17.3

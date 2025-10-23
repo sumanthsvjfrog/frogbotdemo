@@ -43,3 +43,5 @@ jobs:
           # The GitHub token automatically generated for the job
           JF_GIT_TOKEN: ${{ secrets.JF_GITHUB_TOKEN }}
           JF_INCLUDE_ALL_VULNERABILITIES: "TRUE"
+          JF_REQUIREMENTS_FILE: "requirements.txt"
+          

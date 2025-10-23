@@ -43,5 +43,6 @@ jobs:
           # The GitHub token automatically generated for the job
           JF_GIT_TOKEN: ${{ secrets.JF_GITHUB_TOKEN }}
           JF_INCLUDE_ALL_VULNERABILITIES: "TRUE"
+          FROGBOT_PACKAGE_TYPE: pypi
           JF_REQUIREMENTS_FILE: "requirements.txt"
           

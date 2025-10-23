@@ -29,13 +29,6 @@ jobs:
           oidc-provider-name: destgithub
           oidc-audience: frogoidc
       
-      - name: Debug Requirements
-        run: |
-          echo "Listing repo files:"
-          ls -al
-          echo "Displaying requirements.txt:"
-          cat requirements.txt 
-      
         env:
           # [Mandatory]
           # JFrog platform URL
@@ -52,4 +45,11 @@ jobs:
           JF_INCLUDE_ALL_VULNERABILITIES: "TRUE"
           FROGBOT_PACKAGE_TYPE: pypi
           JF_REQUIREMENTS_FILE: "requirements.txt"
+      
+      - name: Debug Requirements
+        run: |
+          echo "Listing repo files:"
+          ls -al
+          echo "Displaying requirements.txt:"
+          cat requirements.txt 
           

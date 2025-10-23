@@ -28,6 +28,14 @@ jobs:
         with:
           oidc-provider-name: destgithub
           oidc-audience: frogoidc
+      
+      - name: Debug Requirements
+        run: |
+          echo "Listing repo files:"
+          ls -al
+          echo "Displaying requirements.txt:"
+          cat requirements.txt
+          
           
         env:
           # [Mandatory]

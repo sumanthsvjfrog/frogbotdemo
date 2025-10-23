@@ -1,0 +1,44 @@
+name: "Frogbot Scan Pull Request"
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+permissions:
+  pull-requests: write
+  contents: write
+  security-events: write
+  id-token: write
+jobs:
+  scan-pull-request:
+    runs-on: ubuntu-24.04
+    # A pull request needs to be approved, before Frogbot scans it. Any GitHub user who is associated with the
+    # "frogbot" GitHub environment can approve the pull request to be scanned.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      # Install prerequisites1
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - uses: jfrog/frogbot@v2
+        with:
+          oidc-provider-name: destgithub
+          oidc-audience: frogoidc
+          
+        env:
+          # [Mandatory]
+          # JFrog platform URL
+          JF_URL: https://${{ vars.JF_URL }}/
+          JFROG_CLI_LOG_LEVEL: DEBUG
+
+          # [Mandatory if JF_USER and JF_PASSWORD are not provided]
+          # JFrog access token with 'read' permissions on Xray service
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+
+          # [Mandatory]
+          # The GitHub token automatically generated for the job
+          JF_GIT_TOKEN: ${{ secrets.JF_GITHUB_TOKEN }}
+          JF_INCLUDE_ALL_VULNERABILITIES: "TRUE"

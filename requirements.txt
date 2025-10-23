@@ -1,4 +1,3 @@
 nltk
 Django==2.2.0
 requests==2.18.0
-PyYAML==3.11

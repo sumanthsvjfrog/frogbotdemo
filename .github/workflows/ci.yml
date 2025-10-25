@@ -1,1 +1,83 @@
+name: "Python-Demo"
 
+on: 
+  workflow_dispatch:
+  
+permissions:
+  actions: read # For detecting the Github Actions environment.
+  id-token: write # for creating OIDC tokens for signing.
+  packages: write # for uploading attestations.
+  security-events: write # Required for uploading code scanning
+  attestations: write
+  contents: write
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      OIDC_PROVIDER: 'destgithub'
+      OIDC_AUDIENCE: 'frogoidc'
+      jpdMain: 'mainjpd'
+      JFCliVersion: '2.79.0'
+      MODULE_NAME: 'mybmllpypi'
+      MAINJF_URL: 'https://psblr.jfrog.io'
+      PYPI_REPO: 'cgs-nuget-virtual'
+      BUILD_NAME: "pypi-build"
+      BUILD_ID: "${{github.run_number}}"
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+#      - name: Setup python
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.10"
+
+      - name: Setup JFrog CLI for SAAS main
+        uses: jfrog/setup-jfrog-cli@v4
+        id: setup-cli-main
+        env:  
+          JF_URL: ${{ env.MAINJF_URL }}
+        with:
+          oidc-provider-name: ${{ env.OIDC_PROVIDER }}
+          oidc-audience: ${{ env.OIDC_AUDIENCE }}
+          custom-server-id: ${{ env.jpdMain }}
+          version: ${{ env.JFCliVersion }}
+
+      - name: Run JFrog CLI Ping
+        run: jf rt ping
+     
+      - name: Configure pip with Artifactory
+        run: |
+          jf pip-config --repo-resolve=$PYPI_REPO --repo-deploy=$PYPI_REPO
+      
+      - name: configure environment
+        run: |    
+          pip install --upgrade pip     
+          python3 -m pip install --upgrade pip setuptools wheel sigstore
+          wheel -h
+          pip show setuptools
+          echo $VIRTUAL_ENV
+  
+      - name: JFrog Xray Audit command
+        run: jf audit .
+
+      - name: build project
+        run: |                                   
+          jf pip install . --build-name=$BUILD_NAME --build-number=$BUILD_NUMBER --module=$MODULE_NAME              
+          python setup.py sdist bdist_wheel
+          #cd dist && echo "hashes=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
+    
+      - name: Upload artifacts to Artifactory
+        run: |
+          jf rt u "dist/*" "$PYPI_REPO/" \
+            --build-name=$BUILD_NAME \
+            --build-number=$BUILD_NUMBER \
+            --module=$MODULE_NAME
+
+      - name: Collect and publish build info
+        run: |
+          jf rt bag $BUILD_NAME $BUILD_NUMBER
+          jf rt bce $BUILD_NAME $BUILD_NUMBER
+          jf rt bp $BUILD_NAME $BUILD_NUMBER

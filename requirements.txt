@@ -1,5 +1,5 @@
 nltk
 requests==2.32.0
 PyYAML==6.0.3
-Django==4.2.0
+Django==2.2.0
 Pillow==2.8.1

@@ -68,6 +68,9 @@ jobs:
           jf pip install -r requirements.txt --build-name=$BUILD_NAME --build-number=$BUILD_NUMBER --module=$MODULE_NAME              
           python setup.py sdist bdist_wheel
           #cd dist && echo "hashes=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
+
+      - name: JFrog Xray Audit after installing dependencies
+        run: jf audit .
     
       - name: Upload artifacts to Artifactory
         run: |
@@ -81,3 +84,8 @@ jobs:
           jf rt bag $BUILD_NAME $BUILD_NUMBER
           jf rt bce $BUILD_NAME $BUILD_NUMBER
           jf rt bp $BUILD_NAME $BUILD_NUMBER
+          
+      - name: JFrog build scan
+        run: jf bs $BUILD_NAME $BUILD_NUMBER
+
+        

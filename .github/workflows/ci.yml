@@ -21,7 +21,7 @@ jobs:
       JFCliVersion: '2.79.0'
       MODULE_NAME: 'mybmllpypi'
       MAINJF_URL: 'https://psblr.jfrog.io'
-      PYPI_REPO: 'cgs-nuget-virtual'
+      PYPI_REPO: 'bmll-pypi-demo-dev-virt'
       BUILD_NAME: "pypi-build"
       BUILD_ID: "${{github.run_number}}"
     

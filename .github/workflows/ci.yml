@@ -86,6 +86,11 @@ jobs:
           jf rt bp $BUILD_NAME $BUILD_NUMBER
           
       - name: JFrog build scan
-        run: jf bs $BUILD_NAME $BUILD_NUMBER
+        run: jf bs $BUILD_NAME $BUILD_NUMBER > bsout.txt
+
+      - name: Add Xray build scan table to GitHub Actions summary
+        run: |
+          echo "## JFrog Xray Build Scan Results" >> $GITHUB_STEP_SUMMARY
+          cat bsout.txt >> $GITHUB_STEP_SUMMARY
 
         

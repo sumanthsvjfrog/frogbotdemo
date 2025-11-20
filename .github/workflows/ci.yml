@@ -74,7 +74,14 @@ jobs:
     
       - name: Upload artifacts to Artifactory
         run: |
-          jf rt u "dist/*" "$PYPI_REPO/" \
+          jf rt u "dist/*.whl" "$PYPI_REPO/" \
+            --build-name=$BUILD_NAME \
+            --build-number=$BUILD_NUMBER \
+            --module=$MODULE_NAME
+
+      - name: Upload artifacts to Artifactory
+        run: |
+          jf rt u "dist/*.tar.gz" "$PYPI_REPO/" \
             --build-name=$BUILD_NAME \
             --build-number=$BUILD_NUMBER \
             --module=$MODULE_NAME
